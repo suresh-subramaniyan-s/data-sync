@@ -1,0 +1,40 @@
+ > $25 Mio
+ ( classified as at Risk )
+
+ $10 - $25 Mio > 2 days
+ ( classified as at Risk )
+ 
+ $10 - $25 Mio <= 2 days 
+ 
+
+
+amt_risk_font = "color:red;font-family:Arial;border: 2px solid #000000;font-size:13px;border-collapse:collapse;text-align:right"
+ 
+total_entries = len(query_res)
+t_total_entries = f'{query_res["AMOUNT_2"].sum():,.0f}'
+item_at_risk =  len(query_res[(query_res["COMMENTS_FLAG"].isin([3])) & (query_res["RISK"]==1)])
+t_item_at_risk = f'{query_res[(query_res["COMMENTS_FLAG"].isin([3])) & (query_res["RISK"]==1)]["AMOUNT_2"].sum():,.0f}'
+res_received = len(query_res[query_res["COMMENTS_FLAG"].isin([2,3])])
+t_res_received = f'{query_res[query_res["COMMENTS_FLAG"].isin([2,3])]["AMOUNT_2"].sum():,.0f}'
+
+no_res_received_cat1 = len(query_res[(query_res["COMMENTS_FLAG"].isin([1])) & (query_res["AMOUNT_2"] > 25000000)])
+no_res_received_cat2 = len(query_res[(query_res["COMMENTS_FLAG"].isin([1])) & ((query_res["AMOUNT_2"] >= 10000000)& (query_res["AMOUNT_2"] < 25000000)) & (query_res["RISK"]==1)])
+no_res_received_cat3 = len(query_res[(query_res["COMMENTS_FLAG"].isin([1])) & ((query_res["AMOUNT_2"] >= 10000000)& (query_res["AMOUNT_2"] < 25000000)) & (query_res["RISK"]==0)])
+
+t_no_res_received = f'{query_res[query_res["COMMENTS_FLAG"].isin([1])]["AMOUNT_2"].sum():,.0f}'
+no_res_received = len(query_res[query_res["COMMENTS_FLAG"].isin([1])])
+
+t_no_res_received_cat1 = f'{query_res[(query_res["COMMENTS_FLAG"].isin([1])) & (query_res["AMOUNT_2"] > 25000000)]["AMOUNT_2"].sum():,.0f}'
+t_no_res_received_cat2 = f'{query_res[(query_res["COMMENTS_FLAG"].isin([1])) & ((query_res["AMOUNT_2"] >= 10000000)& (query_res["AMOUNT_2"] < 25000000)) & (query_res["RISK"]==1)]["AMOUNT_2"].sum():,.0f}'
+t_no_res_received_cat3 = f'{query_res[(query_res["COMMENTS_FLAG"].isin([1])) & ((query_res["AMOUNT_2"] >= 10000000)& (query_res["AMOUNT_2"] < 25000000)) & (query_res["RISK"]==0)]["AMOUNT_2"].sum():,.0f}'
+
+risk_summary_data = []
+risk_summary_data.append(summary_header.format(header_font = header_font))
+risk_summary_data.append(f'<tr><td colspan="2" style="{data_font}"> Total entries reported </td><td style="{data_font}"> {total_entries} </td><td  style="{amt_font}"> {t_total_entries} </td></tr> ')
+risk_summary_data.append(f'<tr><td colspan="2" style="{risk_font}"> Items at Risk </td><td style="{risk_font}"> {item_at_risk} </td><td  style="{amt_risk_font}"> {t_item_at_risk} </td></tr></tr> </table> ')
+
+risk_summary_data.append(f'<tr><td rowspan="4" style="{data_font}"> No response received </td><td style="{risk_font}">  > $25 Mio <br/>( classified as at Risk ) </td><td style="{risk_font}"> {no_res_received_cat1} </td><td  style="{amt_risk_font}"> {t_no_res_received_cat1} </td></tr><tr><td style="{risk_font}">  $10 - $25 Mio > 2 days <br/>( classified as at Risk ) </td><td style="{risk_font}"> {no_res_received_cat2} </td><td  style="{amt_risk_font}"> {t_no_res_received_cat2} </td></tr><tr><td style="{risk_font}"> $10 - $25 Mio <= 2 days </td><td style="{risk_font}"> {no_res_received_cat3} </td><td  style="{amt_risk_font}"> {t_no_res_received_cat3} </td></tr><tr><td style="{data_font}"> Total - No Response </td><td style="{data_font}"> {no_res_received} </td><td  style="{amt_font}"> {no_res_df["AMOUNT_2"].sum():,.0f} </td></tr>')
+
+risk_summary_data.append(f'<tr><td colspan="2" style="{data_font}"> Response received </td><td style="{data_font}"> {res_received} </td><td  style="{amt_font}"> {t_res_received} </td></tr>  ')
+			
+risk_summary_data = "".join(risk_summary_data).replace('\n','')
