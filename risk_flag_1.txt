@@ -1,0 +1,36 @@
+ > $25 Mio
+ ( classified as at Risk )
+
+ $10 - $25 Mio > 2 days
+ ( classified as at Risk )
+ 
+ $10 - $25 Mio <= 2 days 
+ 
+total_entries = len(query_res)
+t_total_entries = f'{query_res["AMOUNT_2"].sum():,.0f}'
+item_at_risk =  len(query_res[(query_res["COMMENTS_FLAG"].isin([3])) & (query_res["RISK"]==1)])
+t_item_at_risk = f'{query_res[(query_res["COMMENTS_FLAG"].isin([3])) & (query_res["RISK"]==1)]["AMOUNT_2"].sum():,.0f}'
+res_received = len(query_res[query_res["COMMENTS_FLAG"].isin([2,3])])
+t_res_received = f'{query_res[query_res["COMMENTS_FLAG"].isin([2,3])]["AMOUNT_2"].sum():,.0f}'
+no_res_df = query_res["COMMENTS_FLAG"].isin([1])
+
+no_res_received_cat1 = len(no_res_df[no_res_df["AMOUNT_2"] > 25000000])
+no_res_received_cat2 = len(no_res_df[((no_res_df["AMOUNT_2"] >= 10000000)& (no_res_df["AMOUNT_2"] < 25000000)) & (no_res_df["RISK"]==1)])
+no_res_received_cat3 = len(no_res_df[((no_res_df["AMOUNT_2"] >= 10000000)& (no_res_df["AMOUNT_2"] < 25000000)) & (no_res_df["RISK"]==0)])
+
+t_no_res_received = f'{query_res[query_res["COMMENTS_FLAG"].isin([1])]["AMOUNT_2"].sum():,.0f}'
+
+t_no_res_received_cat1 = f'{no_res_df[no_res_df["AMOUNT_2"] > 25000000]["AMOUNT_2"].sum():,.0f}'
+t_no_res_received_cat2 = f'{no_res_df[((no_res_df["AMOUNT_2"] >= 10000000)& (no_res_df["AMOUNT_2"] < 25000000)) & (no_res_df["RISK"]==1)]["AMOUNT_2"].sum():,.0f}'
+t_no_res_received_cat3 = f'{no_res_df[((no_res_df["AMOUNT_2"] >= 10000000)& (no_res_df["AMOUNT_2"] < 25000000)) & (no_res_df["RISK"]==0)]["AMOUNT_2"].sum():,.0f}'
+
+risk_summary_data = []
+risk_summary_data.append(summary_header.format(header_font = header_font))
+risk_summary_data.append(f'<tr><td colspan="2" style="{data_font}"> Total entries reported </td><td style="{data_font}"> {total_entries} </td><td  style="{amt_font}"> {t_total_entries} </td></tr> ')
+risk_summary_data.append(f'<tr><td colspan="2" style="color:red;"> Items at Risk </td><td style="color:red;"> {item_at_risk} </td><td  style="color:red;text-align:right"> {t_item_at_risk} </td></tr></tr> </table> ')
+
+risk_summary_data.append(f'<tr><td rowspan="4" style="{data_font}"> No response received </td><td style="color:red;">  > $25 Mio <br/>( classified as at Risk ) </td><td style="color:red;"> {no_res_received_cat1} </td><td  style="color:red;text-align:right"> {t_no_res_received_cat1} </td></tr><tr><td style="color:red;">  $10 - $25 Mio > 2 days <br/>( classified as at Risk ) </td><td style="color:red;"> {no_res_received_cat2} </td><td  style="color:red;text-align:right"> {t_no_res_received_cat2} </td></tr><tr><td style="color:red;"> $10 - $25 Mio <= 2 days </td><td style="color:red;"> {no_res_received_cat3} </td><td  style="color:red;text-align:right"> {t_no_res_received_cat3} </td></tr><tr><td style="color:#000000;"> Total - No Response </td><td style="color:#000000;"> {len(no_res_df)} </td><td  style="color:red;text-align:#000000"> {no_res_df["AMOUNT_2"].sum():,.0f} </td></tr>')
+
+risk_summary_data.append(f'<tr><td colspan="2" style="color:green;"> Response received </td><td style="color:green;"> {res_received} </td><td  style="color:green;text-align:right"> {t_res_received} </td></tr>  ')
+			
+risk_summary_data = "".join(risk_summary_data).replace('\n','')
